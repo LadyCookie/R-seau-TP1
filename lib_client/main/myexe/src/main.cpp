@@ -1,7 +1,8 @@
 #include <iostream>
+#include "Message.hpp"
 
 int main(void)
 {
-    std::cout << "Hello world" << std::endl;
-    std::cin.ignore();
+    std::cout << "blabla" <<std::endl;
+    Message msg=Message("exemple.json");
 }

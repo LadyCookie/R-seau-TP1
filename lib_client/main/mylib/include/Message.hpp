@@ -1,4 +1,7 @@
 #include <string>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 class Message{
     public:
@@ -7,8 +10,5 @@ class Message{
     ~Message();
 
     private:
-    std::string username;
-    int msg_type;
-    int team;
-    std::string msg;
+    json data;
 };
