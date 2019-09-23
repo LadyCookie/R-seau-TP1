@@ -1,5 +1,8 @@
 #include <iostream>
+#include "ThunderChatClient.hpp"
 #include "Message.hpp"
+
+
 
 int main(void)
 {

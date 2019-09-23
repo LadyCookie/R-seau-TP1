@@ -12,7 +12,7 @@ set(MODEL_TEST_VIEWER_HEADERS include/main_test.hpp)
 find_package(GTest CONFIG REQUIRED)
 find_package(GMock CONFIG REQUIRED)
 
-add_executable(model_viewer_test ${MODEL_TEST_VIEWER_SOURCES} ${MODEL_TEST_VIEWER_HEADERS})
-target_link_libraries(model_viewer_test PUBLIC GTest::main GMock::gmock)
+add_executable(model_viewer_test ${MODEL_TEST_VIEWER_SOURCES}) # ${MODEL_TEST_VIEWER_HEADERS})
+target_link_libraries(model_viewer_test PUBLIC GTest::main GMock::gmock PRIVATE nlohmann_json::nlohmann_json)
 
 add_test(NAME model_viewer COMMAND model_viewer_test)
