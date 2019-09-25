@@ -1,6 +1,9 @@
-#include "Message.hpp"
+#ifndef THUNDERCHATSERVER_HEADER
+#define THUNDERCHATSERVER_HEADER
+
 #include <string>
 #include<vector>
+#include <functional>
 
 #ifdef _WIN32
 
@@ -29,9 +32,16 @@ class ThunderChatServer{
     public:
     ThunderChatServer(std::string addr, int port);
     ~ThunderChatServer();
-    void OnConnect(std::string addrClient);
+    void OnConnect(std::function<void(const std::string& addrClient)> OCCB);
+    void OnDisconnect(std::function<void(const std::string& addrClient)> ODCB);
     void Stop();
 
     private:
+    void runner();
     std::vector<SOCKET> all_sockets;
+    hostent addrServer;
+    int port;
+    std::function<void(const std::string& client)> callbackOnConnect;
+    std::function<void(const std::string& client)> callbackOnDisconnect;
 };
+#endif //thundrechatserver_header
