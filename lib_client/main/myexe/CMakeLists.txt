@@ -14,4 +14,4 @@ set(HEADERS ${INCLUDE_FOLDER}/main.hpp)
 
 #Main exec
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME} PUBLIC my_lib)
+target_link_libraries(${PROJECT_NAME} PUBLIC my_lib PRIVATE nlohmann_json::nlohmann_json)

@@ -1,3 +1,6 @@
+#ifndef MESSAGE_HEADER
+#define MESSAGE_HEADER
+
 #include <string>
 #include <nlohmann/json.hpp>
 
@@ -12,3 +15,5 @@ class Message{
     private:
     json data;
 };
+
+#endif
