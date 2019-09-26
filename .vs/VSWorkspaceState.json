@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\exe_client",
+    "\\exe_client\\main",
+    "\\exe_client\\main\\myexe",
+    "\\exe_client\\main\\myexe\\src"
+  ],
+  "SelectedNode": "\\exe_client\\main\\myexe\\src\\main.cpp",
+  "PreviewInSolutionExplorer": false
+}
