@@ -2,8 +2,11 @@
 #define THUNDERCHATSERVER_HEADER
 
 #include <string>
+#include <array>
 #include<vector>
 #include <functional>
+#include <thread>
+#include "Connection.hpp"
 
 #ifdef _WIN32
 
@@ -38,10 +41,14 @@ class ThunderChatServer{
 
     private:
     void runner();
-    std::vector<SOCKET> all_sockets;
+    std::thread loop;
+    bool shouldStop;
+
+    std::array<Connection,10> all_sockets;
+
     hostent addrServer;
     int port;
-    std::function<void(const std::string& client)> callbackOnConnect;
-    std::function<void(const std::string& client)> callbackOnDisconnect;
+    std::vector<std::function<void(const std::string& client)>> callbackOnConnect;
+    std::vector<std::function<void(const std::string& client)>> callbackOnDisconnect;
 };
 #endif //thundrechatserver_header

@@ -1,6 +1,5 @@
 #include "ThunderChatServer.hpp"
 #include <thread>
-#include <algorithm>
 
 #ifdef _WIN32
 
@@ -25,38 +24,29 @@ using SOCKET = inet
 
 #endif
 
-std::thread t;
+
+void ThunderChatServer::runner(){
+    SOCKET s;
+    while(!shouldStop){
+        s=accept;
+        auto client = new Connection(s); //si possible enlever le new
+        
+    }
+}
 
 ThunderChatServer::ThunderChatServer(std::string addr, int port){
     //initialization
     addrServer=*gethostbyname((const char *) &addr);
     port=htons(port);
-    callbackOnConnect={};
-    callbackOnDisconnect={};
-    all_sockets.reserve(10);
-
-    //running server
-    std::thread t(&runner);
-}
-
-void ThunderChatServer::runner(){
-    std::for_each(all_sockets.begin(),all_sockets.end(),[&](SOCKET & s) {
-            //creating socket
-            //binding socket
-            //recv et send non bloquants
-    });
+    shouldStop=false;
+    //launching server
+    std::thread loop(&runner);
 }
 
 void ThunderChatServer::OnConnect(std::function<void(const std::string& addrclient)> OCCB){
-    callbackOnConnect=OCCB;
+    //callbackOnConnect=OCCB;
 }
 
 void ThunderChatServer::OnDisconnect(std::function<void(const std::string& addrClient)> ODCB){
-    callbackOnDisconnect=ODCB;
-}
-
-void ThunderChatServer::Stop(){
-    if(t.joinable()){
-        t.join();
-    }
+    //callbackOnDisconnect=ODCB;
 }
