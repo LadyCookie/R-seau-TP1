@@ -1,6 +1,4 @@
-#include "ThunderChatServer.hpp"
 #include <thread>
-#include <algorithm>
 
 #ifdef _WIN32
 
@@ -27,21 +25,15 @@ using SOCKET = inet
 
 class Connection{
     public:
-    Connection(SOCKET);
-    void OnData(std::function<void(const std::string& client)> f) {
-        OnDataEvent.push_back(f);
-    });
-    //OnConnect();
+    Connection();
+    Connection(SOCKET,sockaddr,socklen_t);
+    void OnData(std::function<void(const std::string& client)> f);
+    void CloseConnection();
+
     private:
-    void run(){
-        while(!stop){
-            buffer
-            recv buffer //à faire en non-bloquant
-            for auto (f : onDataEvent) {
-                f(buffer)
-            }
-                
-        }
-    };
+    void run();
+    SOCKET clientSocket;
+    sockaddr clientAddr;
+    socklen_t clientAddrLength;
     std::vector<std::function<void(const std::string& client)>> OnDataEvent;
 };

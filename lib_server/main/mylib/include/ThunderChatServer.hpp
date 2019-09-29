@@ -40,7 +40,7 @@ class ThunderChatServer{
     void Stop();
 
     private:
-    void runner();
+    int runner();
     std::thread loop;
     bool shouldStop;
 
