@@ -7,6 +7,7 @@
 #include <functional>
 #include <thread>
 #include "Connection.hpp"
+#include <string>
 
 #ifdef _WIN32
 
@@ -44,11 +45,13 @@ class ThunderChatServer{
     std::thread loop;
     bool shouldStop;
 
-    std::array<Connection,10> all_sockets;
+    std::vector<Connection> connections;
 
     hostent addrServer;
     int port;
     std::vector<std::function<void(const std::string& client)>> callbackOnConnect;
     std::vector<std::function<void(const std::string& client)>> callbackOnDisconnect;
+
+	const std::string& test(const std::string& client);
 };
 #endif //thundrechatserver_header

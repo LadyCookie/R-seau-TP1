@@ -28,29 +28,43 @@ using SOCKET = inet
 
 #endif
 
-std::thread loop;
+//std::thread loop;
 
-Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength){
+/*Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength){
     clientSocket=s;
     clientAddr=clientAddr;
     clientAddrLength=clientAddrLength;
     std::thread loop(&run);
+}*/
+
+Connection::Connection(SOCKET clientSocket)
+{
+	this->clientSocket = clientSocket;
+	std::thread t_init(&run);
+	t = &t_init;
 }
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
-    OnDataEvent.push_back(f);
+    dataEvents.push_back(f);
 };
 
 void Connection::run(){
-    char* buffer =(char*) malloc (MAX_MSG_SIZE * sizeof(char));
+
+	std::array<char, MAX_MSG_SIZE> buffer;
+
     while(!shouldStop){
-        recv(clientSocket, buffer, MAX_MSG_SIZE,0);
+		int receivedBytes = recv(clientSocket, buffer, MAX_MSG_SIZE, 0);
+		if (receivedBytes < 0)
+		{
+			std::cout << "Error" << std::endl;
+			closesocket(clientSocket);
+			return EXIT_FAILURE;
+		}
         for(std::function<void(const std::string& client)> f : OnDataEvent)
         {
             f(buffer);
         };
     }
-    free(buffer);
 }
 
 void Connection::CloseConnection(){

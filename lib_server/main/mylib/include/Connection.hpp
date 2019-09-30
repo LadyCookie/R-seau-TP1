@@ -1,4 +1,5 @@
 #include <thread>
+#include <atomic>
 
 #ifdef _WIN32
 
@@ -25,16 +26,21 @@ using SOCKET = inet
 
 class Connection{
     public:
-    Connection();
-    Connection(SOCKET,sockaddr,socklen_t);
-    void OnData(std::function<void(const std::string& client)> f);
-    void CloseConnection();
+		Connection(SOCKET);	// Constructeur
+	    //Connection(SOCKET,sockaddr,socklen_t);
+		void OnData(std::function<void(const std::string& client)> f);
+		void CloseConnection();
 
     private:
-    void run();
-    bool shouldStop;
-    SOCKET clientSocket;
-    sockaddr clientAddr;
-    socklen_t clientAddrLength;
-    std::vector<std::function<void(const std::string& client)>> OnDataEvent;
+		SOCKET clientSocket;
+		std::thread* t;
+		std::atomic_bool shouldStop = false;
+		std::vector<std::function<void(const std::string& client)>> dataEvents;
+		void run();
+    
+    
+    
+	//sockaddr clientAddr;
+    //socklen_t clientAddrLength;
+    //std::vector<std::function<void(const std::string& client)>> OnDataEvent;
 };

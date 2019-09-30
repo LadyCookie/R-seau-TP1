@@ -27,7 +27,6 @@ using SOCKET = inet
 
 
 int ThunderChatServer::runner(){
-    int nb_connected=0;
     
     #ifdef _WIN32
     WORD versionRequested;
@@ -44,6 +43,7 @@ int ThunderChatServer::runner(){
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
     if(s<0){
         std::cout << "ERROR";
+		closesocket(s);
         return EXIT_FAILURE;
     }
 
@@ -63,43 +63,52 @@ int ThunderChatServer::runner(){
     addrv4.sin_port = htons(8888);
     if(inet_pton(AF_INET, "0.0.0.0", &addrv4.sin_addr)<0){
         std::cout << "ERROR";
+		closesocket(s);
         return EXIT_FAILURE;
     }
 
     //Binding
-    if(bind(s,(sockaddr*)&addrv4,sizeof(sockaddr))<0){
+    if(bind(s, reinterpret_cast<sockaddr*>(&addrv4),sizeof(sockaddr))<0){
         std::cout << "ERROR";
         closesocket(s);
         return EXIT_FAILURE;
     }
-
+	
     //listening for new connections
     if(listen(s,10)<0){
         std::cout << "ERROR";
+		closesocket(s);
         return EXIT_FAILURE;
     }
-
-
 
     sockaddr clientAddr;
     socklen_t clientAddrLength;
 
     //main loop
     while(!shouldStop){
-        if(nb_connected < 9)
-            if(int clientSocket =accept(s, &clientAddr, &clientAddrLength)<0){
-                std::cout << "ERROR";   
-            }
-            else{
-                auto client = new Connection(s, clientAddr, clientAddrLength);
-                all_sockets[nb_connected]=*client;
-                for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
-                {
-                    f("boop");//must change to string but wich one? clientAddr? s?
-                };
-                nb_connected++;
-            }
-    }
+		if(connections.size() < 10)
+			if(int clientSocket = accept(s, &clientAddr, &clientAddrLength)<0)
+			{
+				std::cout << "ERROR";
+				shutdown(s, SD_BOTH);
+				closesocket(s);
+				return EXIT_FAILURE;
+			}
+			else
+			{
+				// Envoyer un message à tout le monde : "username" vient de se connecter
+				Connection client(clientSocket);
+				connections.push_back(client);
+				client.OnData(test);
+				for(std::function<void(const std::string& client)> f : callbackOnConnect)
+				{
+					f("boop");//must change to string but wich one? clientAddr? s?
+				};
+			}
+	}
+}
+const std::string& ThunderChatServer::test() {
+	std::cout << "Test" << std::endl;
 }
 
 ThunderChatServer::ThunderChatServer(std::string addr, int port){
@@ -118,7 +127,7 @@ void ThunderChatServer::OnConnect(std::function<void(const std::string& addrclie
 void ThunderChatServer::OnDisconnect(std::function<void(const std::string& addrClient)> ODCB){
     callbackOnDisconnect.push_back(ODCB);
 }
-
+	
 void ThunderChatServer::Stop(){
     shouldStop=true;
     //waiting main thread to stop
