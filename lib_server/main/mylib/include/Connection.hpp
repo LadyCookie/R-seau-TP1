@@ -32,6 +32,7 @@ class Connection{
 
     private:
     void run();
+    bool shouldStop;
     SOCKET clientSocket;
     sockaddr clientAddr;
     socklen_t clientAddrLength;

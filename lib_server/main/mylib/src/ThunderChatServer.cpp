@@ -129,6 +129,7 @@ void ThunderChatServer::Stop(){
     //closing all connexions
     std::for_each(all_sockets.begin(),all_sockets.end(), [&](Connection & c) {c.CloseConnection();});
 
+    //closing windows library
     #ifdef _WIN32
     WSACleanup();
     #endif
