@@ -95,7 +95,9 @@ int ThunderChatServer::runner(){
                 all_sockets[nb_connected]=*client;
                 for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
                 {
-                    f("boop");//must change to string but wich one? clientAddr? s?
+                    char str[INET_ADDRSTRLEN];
+                    inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
+                    f(str);
                 };
                 nb_connected++;
             }

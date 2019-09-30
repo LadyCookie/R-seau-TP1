@@ -44,11 +44,13 @@ void Connection::OnData(std::function<void(const std::string& client)> f) {
 void Connection::run(){
     char* buffer =(char*) malloc (MAX_MSG_SIZE * sizeof(char));
     while(!shouldStop){
-        recv(clientSocket, buffer, MAX_MSG_SIZE,0);
-        for(std::function<void(const std::string& client)> f : OnDataEvent)
-        {
-            f(buffer);
-        };
+        if (!recv(clientSocket, buffer, MAX_MSG_SIZE,0)<0){
+            
+            for(std::function<void(const std::string& client)> f : OnDataEvent)
+            {
+                f(buffer);
+            };
+        }
     }
     free(buffer);
 }
