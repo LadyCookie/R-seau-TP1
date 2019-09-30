@@ -35,7 +35,7 @@ class Connection{
 		SOCKET clientSocket;
 		std::thread* t;
 		std::atomic_bool shouldStop = false;
-		std::vector<std::function<void(const std::string& client)>> dataEvents;
+		std::vector<std::function<void(const std::string& client)>> OnDataEvent;
 		void run();
     
     

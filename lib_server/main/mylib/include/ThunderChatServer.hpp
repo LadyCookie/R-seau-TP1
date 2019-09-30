@@ -51,7 +51,5 @@ class ThunderChatServer{
     int port;
     std::vector<std::function<void(const std::string& client)>> callbackOnConnect;
     std::vector<std::function<void(const std::string& client)>> callbackOnDisconnect;
-
-	const std::string& test(const std::string& client);
 };
 #endif //thundrechatserver_header

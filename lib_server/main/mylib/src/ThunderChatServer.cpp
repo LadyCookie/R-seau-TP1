@@ -26,6 +26,7 @@ using SOCKET = inet
 #endif
 
 
+
 int ThunderChatServer::runner(){
     
     #ifdef _WIN32
@@ -96,10 +97,11 @@ int ThunderChatServer::runner(){
 			}
 			else
 			{
-				// Envoyer un message à tout le monde : "username" vient de se connecter
+				// Envoyer un message ï¿½ tout le monde : "username" vient de se connecter
 				Connection client(clientSocket);
 				connections.push_back(client);
-				client.OnData(test);
+				std::function<void(const std::string& addrClient)> ptr = test;
+                client.OnData(test);
 				for(std::function<void(const std::string& client)> f : callbackOnConnect)
 				{
 					f("boop");//must change to string but wich one? clientAddr? s?
@@ -107,8 +109,9 @@ int ThunderChatServer::runner(){
 			}
 	}
 }
-const std::string& ThunderChatServer::test() {
-	std::cout << "Test" << std::endl;
+
+void test(const std::string& client) {
+	std::cout << "Test" << client << std::endl;
 }
 
 ThunderChatServer::ThunderChatServer(std::string addr, int port){
@@ -136,7 +139,7 @@ void ThunderChatServer::Stop(){
     }
 
     //closing all connexions
-    std::for_each(all_sockets.begin(),all_sockets.end(), [&](Connection & c) {c.CloseConnection();});
+    std::for_each(connections.begin(),connections.end(), [&](Connection & c) {c.CloseConnection();});
 
     //closing windows library
     #ifdef _WIN32

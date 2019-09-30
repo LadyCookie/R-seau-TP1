@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <functional>
+#include <iostream>
 
 #define MAX_MSG_SIZE 300 //to define more precisely
 
@@ -28,7 +29,7 @@ using SOCKET = inet
 
 #endif
 
-//std::thread loop;
+std::thread loop;
 
 /*Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength){
     clientSocket=s;
@@ -45,12 +46,12 @@ Connection::Connection(SOCKET clientSocket)
 }
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
-    dataEvents.push_back(f);
+    OnDataEvent.push_back(f);
 };
 
 void Connection::run(){
 
-	std::array<char, MAX_MSG_SIZE> buffer;
+	char* buffer = (char*)malloc(MAX_MSG_SIZE * sizeof(char));
 
     while(!shouldStop){
 		int receivedBytes = recv(clientSocket, buffer, MAX_MSG_SIZE, 0);
@@ -58,7 +59,6 @@ void Connection::run(){
 		{
 			std::cout << "Error" << std::endl;
 			closesocket(clientSocket);
-			return EXIT_FAILURE;
 		}
         for(std::function<void(const std::string& client)> f : OnDataEvent)
         {
