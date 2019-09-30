@@ -91,7 +91,7 @@ public:
 
     
 
-            CopyMemory(&sin.sin_addr, host->h_addr_list[0], host->h_length);      //A VERIFIER !!!!!!!!!!!!
+            CopyMemory(&sin.sin_addr, host->h_addr_list[0], host->h_length);      // marche pas sur linux, faire un ifdef
 
         }
         

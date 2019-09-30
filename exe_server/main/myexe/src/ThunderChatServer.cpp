@@ -25,6 +25,7 @@ using SOCKET = int;
 #endif
 
 #include <array>
+#include <vector>
 #include <iostream>
 
 class ThunderChatServer
@@ -86,6 +87,7 @@ ThunderChatServer::ThunderChatServer(std::string addr, int port)
         closesocket(s);
         return EXIT_FAILURE;
     }
+
 }
 
 ThunderChatServer::~ThunderChatServer()
