@@ -21,7 +21,7 @@
 #include <netdb.h>
 #include <errno.h>
 
-using SOCKET = int
+using SOCKET = int;
 #define SD_BOTH SHUT_RDWR
 #define closesocket(s) close(s) 
 
@@ -46,15 +46,6 @@ void ThunderChatServer::runner(){
         std::cout << "ERROR";
     }
 
-    //non-blockink behavior
-    #ifdef _WIN32
-    u_long nonBlocking=1;
-    ioctlsocket(s,FIONBIO,&nonBlocking);
-    #else
-    int flags = fcntl(s, F_GETFL,0);
-    flags = (flags | O_NONBLOCK);
-    fcntl(s, F_SETFL, flags);
-    #endif
 
     //creation of the distant address
     sockaddr_in addrv4;
@@ -100,7 +91,7 @@ void ThunderChatServer::runner(){
                     char str[INET_ADDRSTRLEN];
                     inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
                     f(str);
-                };
+                }; 
                 nb_connected++;
             }
     }

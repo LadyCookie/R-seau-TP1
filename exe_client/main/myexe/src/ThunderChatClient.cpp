@@ -97,15 +97,24 @@ public:
         
         */
 
-        connect(sock_, (SOCKADDR *)&sin, sizeof(sin));
-        
-       
+        if(connect(sock_, (SOCKADDR *)&sin, sizeof(sin))<0)
+        {
+            std::cout << "Connection error";
+            return EXIT_FAILURE;
+        }
+        //on est co
+        std::string e = std::to_string(team_); 
+        auto equipe = e.c_str();
+        send(sock_,equipe,sizeof(equipe),0)
+        // on envoie le numéro de la team
        
     }
 
     void OnMessage(const Message& msg)
     {
-        //Partie JSON
+        //L'afficher et c'est tout ?
+        //On remet sous forme de JSON (Message) et si c'est pour la team : cout<< "Team : " << playerId << " : " <<msg
+        //Et si c'est pour la Party, cout<< "Party : " << playerId << " : " <<msg
     }
 
     void OnDisconnect()
@@ -115,20 +124,18 @@ public:
 
     void SendToParty(const std::string& msg)
     {
-        /*
-        WINDOWS :
-        u_long nonBlocking = 1;
-        ioctlsocket(s,FIONBIO,&nonBlocking);
-        à mettre dans le main ?
-
-        select-send
-
-        */
+        Message mess = Message(playerId_, 0, team_, msg);
+        std::string m = mess.ToSend();
+        auto message = m.c_str();
+        send(sock_,message,sizeof(message),0);       
     }
 
     void SendToTeam(const std::string& msg)
     {
-
+        Message mess = Message(playerId_, 1, team_, msg);
+        std::string m = mess.ToSend();
+        auto message = m.c_str();
+        send(sock_,message,sizeof(message),0);
     }
 
 };
@@ -138,6 +145,7 @@ ThunderChatClient::ThunderChatClient(std::string serverName,std::string playerId
     serverName_ = serverName;
     playerId_ = playerId;
     team_ = team;
+    Connect();
 }
 
 ThunderChatClient::~ThunderChatClient()
