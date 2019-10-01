@@ -2,6 +2,8 @@
 #include <iostream>
 #include <thread>
 
+#define MAX_MSG_SIZE 300 //to define more precisely
+
 #ifdef _WIN32
 
 #define WIN32_LEAN_AND_MEAN
@@ -19,7 +21,7 @@
 #include <netdb.h>
 #include <errno.h>
 
-using SOCKET = inet
+using SOCKET = int
 #define SD_BOTH SHUT_RDWR
 #define closesocket(s) close(s) 
 
@@ -85,7 +87,13 @@ void ThunderChatServer::runner(){
                 std::cout << "ERROR";   
             }
             else{
-                auto client = new Connection(s, clientAddr, clientAddrLength);
+                //waiting client to tell wich team them belongs to
+                char* buffer = (char*)malloc(MAX_MSG_SIZE * sizeof(char));
+                recv(clientSocket, buffer, MAX_MSG_SIZE,0);
+                
+                
+
+                auto client = new Connection(s,clientAddr,clientAddrLength);
                 all_sockets[nb_connected]=*client;
                 for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
                 {
