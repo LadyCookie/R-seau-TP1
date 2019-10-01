@@ -34,7 +34,7 @@ Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength){
     clientSocket=s;
     clientAddr=clientAddr;
     clientAddrLength=clientAddrLength;
-    std::thread loop(&run);
+    std::thread loop(&Connection::run, this);
 }
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
@@ -44,7 +44,7 @@ void Connection::OnData(std::function<void(const std::string& client)> f) {
 void Connection::run(){
     char* buffer =(char*) malloc (MAX_MSG_SIZE * sizeof(char));
     while(!shouldStop){
-        if (!recv(clientSocket, buffer, MAX_MSG_SIZE,0)<0){
+        if (! (recv(clientSocket, buffer, MAX_MSG_SIZE,0)<0)){
             
             for(std::function<void(const std::string& client)> f : OnDataEvent)
             {
@@ -61,5 +61,5 @@ void Connection::CloseConnection(){
         loop.join();
     }
     int err = shutdown(clientSocket, SD_BOTH);
-    int err = closesocket(clientSocket);
+    err = closesocket(clientSocket);
 }

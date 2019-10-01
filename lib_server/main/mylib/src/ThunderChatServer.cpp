@@ -25,8 +25,7 @@ using SOCKET = inet
 
 #endif
 
-
-int ThunderChatServer::runner(){
+void ThunderChatServer::runner(){
     int nb_connected=0;
     
     #ifdef _WIN32
@@ -35,7 +34,6 @@ int ThunderChatServer::runner(){
     versionRequested = MAKEWORD(2,2);
     if(WSAStartup(versionRequested,&wsaData)<0){
         std::cout << "ERROR";
-        return EXIT_FAILURE;
     }
     #endif 
 
@@ -44,7 +42,6 @@ int ThunderChatServer::runner(){
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
     if(s<0){
         std::cout << "ERROR";
-        return EXIT_FAILURE;
     }
 
     //non-blockink behavior
@@ -63,20 +60,17 @@ int ThunderChatServer::runner(){
     addrv4.sin_port = htons(8888);
     if(inet_pton(AF_INET, "0.0.0.0", &addrv4.sin_addr)<0){
         std::cout << "ERROR";
-        return EXIT_FAILURE;
     }
 
     //Binding
     if(bind(s,(sockaddr*)&addrv4,sizeof(sockaddr))<0){
         std::cout << "ERROR";
         closesocket(s);
-        return EXIT_FAILURE;
     }
 
     //listening for new connections
     if(listen(s,10)<0){
         std::cout << "ERROR";
-        return EXIT_FAILURE;
     }
 
 
@@ -110,7 +104,7 @@ ThunderChatServer::ThunderChatServer(std::string addr, int port){
     port=htons(port);
     shouldStop=false;
     //launching server
-    std::thread loop(&runner);
+    std::thread loop(&ThunderChatServer::runner, this);
 }
 
 void ThunderChatServer::OnConnect(std::function<void(const std::string& addrclient)> OCCB){

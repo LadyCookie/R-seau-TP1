@@ -1,4 +1,5 @@
 #include <thread>
+#include <functional>
 
 #ifdef _WIN32
 

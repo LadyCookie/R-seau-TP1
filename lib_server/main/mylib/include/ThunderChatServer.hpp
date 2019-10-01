@@ -40,14 +40,14 @@ class ThunderChatServer{
     void Stop();
 
     private:
-    int runner();
+    void runner();
     std::thread loop;
-    bool shouldStop;
 
     std::array<Connection,10> all_sockets;
 
     hostent addrServer;
     int port;
+    bool shouldStop;
     std::vector<std::function<void(const std::string& client)>> callbackOnConnect;
     std::vector<std::function<void(const std::string& client)>> callbackOnDisconnect;
 };
