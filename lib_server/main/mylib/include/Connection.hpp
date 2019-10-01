@@ -26,7 +26,6 @@ using SOCKET = inet
 
 class Connection{
     public:
-    Connection();
     Connection(SOCKET,sockaddr,socklen_t);
     void OnData(std::function<void(const std::string& client)> f);
     void CloseConnection();

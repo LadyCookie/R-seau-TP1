@@ -46,7 +46,7 @@ void Connection::run(){
     while(!shouldStop){
         if (! (recv(clientSocket, buffer, MAX_MSG_SIZE,0)<0)){
             
-            for(std::function<void(const std::string& client)> f : OnDataEvent)
+            for(std::function<void(const std::string&)> f : OnDataEvent)
             {
                 f(buffer);
             };

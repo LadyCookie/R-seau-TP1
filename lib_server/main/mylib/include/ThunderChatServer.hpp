@@ -10,6 +10,7 @@
 
 #ifdef _WIN32
 
+#pragma comment(lib, "Ws2_32.lib")
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <WinSock2.h>
@@ -43,7 +44,7 @@ class ThunderChatServer{
     void runner();
     std::thread loop;
 
-    std::array<Connection,10> all_sockets;
+    std::vector<Connection> all_sockets;
 
     hostent addrServer;
     int port;
