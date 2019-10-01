@@ -7,14 +7,17 @@
 using json = nlohmann::json;
 
 class Message{
-    public:
-    Message(std::string username, int msg_type, int team, std::string msg);
-    ~Message();
-    
-    int getTeam();
+	public:
+		Message(std::string username, int msg_type, int team, std::string msg);
 
-    private:
-    json data;
+		int getTeam();
+		int getMsgType();
+		std::string getUsername();
+		std::string getMsg();
+		std::string ToSend();
+
+	private:
+		json data;
 };
 
 #endif

@@ -1,3 +1,6 @@
+#ifndef THUNDERCHATCLIENTSERVER_HEADER
+#define THUNDERCHATCLIENTSERVER_HEADER
+
 #include <string>
 #include "Message.hpp"
 
@@ -30,13 +33,14 @@ class ThunderChatClient{
     ~ThunderChatClient();
     bool Connect();
     void OnMessage(const Message& msg);
-    void OnDisconnet();
+    void OnDisconnect();
     void SendToParty(const std::string& msg);
     void SendToTeam(const std::string& msg);
 
     private:
-    std::string serverName;
-    std::string playerId;
-    int team;
-    SOCKET sock;
+    std::string serverName_;
+    std::string playerId_;
+    int team_;
+    SOCKET sock_;
 };
+#endif //header

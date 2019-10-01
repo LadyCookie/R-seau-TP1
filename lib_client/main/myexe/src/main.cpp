@@ -1,12 +1,15 @@
 #include <iostream>
 #include "ThunderChatClient.hpp"
-#include "Message.hpp"
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+
 
 int main(void)
 {
-    std::cout << "blabla" <<std::endl;
-    Message msg=Message("exemple.json");
-    //std::string username="LAdyCookie";
-    //std::string blabla="Bonjour KyaMehdi";
-    //Message msg=Message(username,0,0,blabla);
+
+    ThunderChatClient Client = ThunderChatClient("127.0.0.1", "playerId", 1);
+
 }
