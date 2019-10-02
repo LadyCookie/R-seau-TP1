@@ -1,8 +1,10 @@
 #include "ThunderChatServer.hpp"
 #include "Message.hpp"
+
 #include <iostream>
 #include <thread>
 #include <array>
+#include <algorithm>
 
 #define MAX_MSG_SIZE 1024 //to define more precisely
 
@@ -45,49 +47,39 @@ void ThunderChatServer::runner()
 	std::cout << "Win library launched" << std::endl;
 
 
-    //creation of the socket
-    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-    if(s<0){
-        std::cout << "ERROR";
-    }
-
-	std::cout << "Socket succesfully created" << std::endl;
-
-	/*
-    //creation of the distant address
-    sockaddr_in addrv4;
-    addrv4.sin_family = AF_INET;
-    addrv4.sin_port = htons(8888);
-    if(inet_pton(AF_INET, "0.0.0.0", &addrv4.sin_addr)<0){
-        std::cout << "ERROR";
-    }
-	*/
-
-    //Binding
-    if(bind(s,(sockaddr*)&addrServer,sizeof(sockaddr))<0){
-        std::cout << "ERROR";
-        closesocket(s);
-    }
-
-	std::cout << "Bind succeed" << std::endl;
-
-    //listening for new connections
-    if(listen(s,10)<0){
-        std::cout << "ERROR";
-    }
-
-	std::cout << "Listening new connections" << std::endl;
-
-
-    sockaddr clientAddr;
-    socklen_t clientAddrLength=sizeof(clientAddr);
+   
 
     //main loop
     std::cout << "entering main loop" << std::endl;
     while(!shouldStop){
-        
+
+        // creation of the socket
+        SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+        if (s < 0) { std::cout << "ERROR"; }
+
+        std::cout << "Socket succesfully created" << std::endl;
+
+        // Binding
+        if (bind(s, (sockaddr*) &addrServer, sizeof(sockaddr)) < 0)
+        {
+            std::cout << "ERROR";
+            closesocket(s);
+        }
+
+        std::cout << "Bind succeed" << std::endl;
+
+        // listening for new connections
+        if (listen(s, 10) < 0) { std::cout << "ERROR"; }
+
+        std::cout << "Listening new connections" << std::endl;
+
+        sockaddr clientAddr;
+        socklen_t clientAddrLength = sizeof(clientAddr);
+
         if (nb_connected < 9) std::cout << "waiting new connection" << std::endl;
+
 		int clientSocket = accept(s, &clientAddr, &clientAddrLength);
+
             if(clientSocket	==INVALID_SOCKET){
                 std::cout << "ERROR : " << clientSocket << std::endl;   
             }
@@ -109,50 +101,41 @@ void ThunderChatServer::runner()
 					std::string client_team_str = buffer.data();
 					int client_team = std::stoi(client_team_str);
 					std::cout << "Team client : " << client_team << std::endl;
-
 					if (client_team == 0) {
 						//Mettre dans l'équipe A
 
+						auto client =  Connection(s,clientAddr,clientAddrLength,0);
+						socket_team_A.push_back(client); 
 
-						/*
-						auto client =  Connection(s,clientAddr,clientAddrLength);
-						all_sockets[nb_connected]=*client;
 						for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
 						{
 							char str[INET_ADDRSTRLEN];
 							inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
 							f(str);
-						};
+						};                                               
+
 						nb_connected++;
-						*/
-
-
 					}
 					if (client_team == 1) {
-						//Mettre dans l'équipe B
+                        // Mettre dans l'équipe B
 
-						/*
-						auto client = Connection(s,clientAddr,clientAddrLength);
-						all_sockets[nb_connected]=*client;
-						for(std::function<void(const std::string& clientB)> f : callbackOnConnect)
-						{
-							char str[INET_ADDRSTRLEN];
-							inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
-							f(str);
-						};
+                        auto client =Connection(s, clientAddr, clientAddrLength, 1);
+                        socket_team_B.push_back(client);
+
+                        for (std::function<void(const std::string& clientA)> f :
+                                callbackOnConnect)
+                        {
+                            char str[INET_ADDRSTRLEN];
+                            inet_ntop(AF_INET, &clientAddr, str,
+                                        INET_ADDRSTRLEN);
+                            f(str);
+                        };         
 						nb_connected++;
-						*/
-
 					}
 					else {
-						//Refuser la connexion
-						//shouldStop = true ?
+                        closesocket(s);
 					}
                 }
-                
-                //std::cout << msg << std::endl;
-                
-				
             }
     }
 }
@@ -188,8 +171,8 @@ void ThunderChatServer::Stop(){
     }
 
     //closing all connexions
-    std::for_each(all_sockets.begin(),all_sockets.end(), [&](Connection & c) {c.CloseConnection();});
-
+    std::for_each(socket_team_A.begin(),socket_team_A.end(), [&](Connection & c) {c.CloseConnection();});
+    std::for_each(socket_team_B.begin(), socket_team_B.end(), [&](Connection& c) { c.CloseConnection(); });
     //closing windows library
     #ifdef _WIN32
     WSACleanup();

@@ -38,11 +38,14 @@ class ThunderChatServer{
     void OnDisconnect(std::function<void(const std::string& addrClient)> ODCB);
     void Stop();
 
+
     private:
+    void sendToTeamA(const std::string& msg);
     void runner();
     std::unique_ptr<std::thread> loop;
 
-    std::vector<Connection> all_sockets;
+    std::vector<Connection> socket_team_A;
+    std::vector<Connection> socket_team_B;
 
     sockaddr_in addrServer;
     int port;

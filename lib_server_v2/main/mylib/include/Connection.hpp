@@ -26,15 +26,18 @@ using SOCKET = inet
 
 class Connection{
     public:
-    Connection(SOCKET,sockaddr,socklen_t);
-    void OnData(std::function<void(const std::string& client)> f);
+    Connection(SOCKET,sockaddr,socklen_t,int);
+    void OnData(std::function<void(const std::string& msg)> f);
     void CloseConnection();
 
     private:
     void run();
     bool shouldStop;
+    int team_;
     SOCKET clientSocket;
     sockaddr clientAddr;
     socklen_t clientAddrLength;
     std::vector<std::function<void(const std::string& client)>> OnDataEvent;
+    std::vector<Connection> *myTeam_;
+    std::vector<Connection> *otherTeam_;
 };

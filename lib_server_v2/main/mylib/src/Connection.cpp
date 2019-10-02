@@ -31,11 +31,12 @@ using SOCKET = inet
 
 std::thread loop;
 
-Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength){
+Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength, int team){
     clientSocket=s;
     clientAddr=clientAddr;
     clientAddrLength=clientAddrLength;
     std::thread loop(&Connection::run, this);
+    team_ = team;
 }
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
@@ -46,11 +47,10 @@ void Connection::run(){
 	std::array<char, MAX_MSG_SIZE> buffer;
 	memset(buffer.data(), '\0', MAX_MSG_SIZE);
     while(!shouldStop){
-        if (! (recv(clientSocket, buffer, MAX_MSG_SIZE,0)<0)){
-            
+        if (! (recv(clientSocket, buffer.data(), MAX_MSG_SIZE,0)<0)){
             for(std::function<void(const std::string&)> f : OnDataEvent)
             {
-                f(buffer);
+                f(buffer.data());
             };
         }
     }
