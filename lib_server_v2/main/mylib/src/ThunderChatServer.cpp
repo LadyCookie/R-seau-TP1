@@ -76,7 +76,7 @@ void ThunderChatServer::runner()
         std::cout << "ERROR";
     }
 
-	std::cout << "Listening new connexions" << std::endl;
+	std::cout << "Listening new connections" << std::endl;
 
 
     sockaddr clientAddr;
@@ -87,19 +87,24 @@ void ThunderChatServer::runner()
     while(!shouldStop){
         
         if (nb_connected < 9) std::cout << "waiting new connection" << std::endl;
-            if(int clientSocket =accept(s, &clientAddr, &clientAddrLength)==INVALID_SOCKET){
+		int clientSocket = accept(s, &clientAddr, &clientAddrLength);
+            if(clientSocket	==INVALID_SOCKET){
                 std::cout << "ERROR : " << clientSocket << std::endl;   
             }
             else{
                 std::cout << "Something is coming" << std::endl;
                 //waiting client to tell wich team them belongs to
+
+
                 std::array<char, MAX_MSG_SIZE> buffer;
-                if (int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0) <= 0)
-                { std::cout << "ERROR RECEPTION FAIL : " << receivedBytes << std::endl;
+				memset(buffer.data(), '\0', MAX_MSG_SIZE);
+                if (int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0) < 0)
+                { std::cout << "ERROR RECEPTION FAIL : " << WSAGetLastError() << std::endl;
 				}
                 else
                 {
                     std::string dataStr(buffer.data(), receivedBytes);
+					std::cout  << buffer.data() << std::endl;
                 }
                 
                 //std::cout << msg << std::endl;

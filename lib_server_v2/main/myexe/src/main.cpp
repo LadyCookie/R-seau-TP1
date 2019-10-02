@@ -10,9 +10,9 @@ using json = nlohmann::json;
 int main(void)
 {
 
-    std::cout << "Création du server" << std::endl;
+    std::cout << "CrÃ©ation du server" << std::endl;
     ThunderChatServer Server = ThunderChatServer("127.0.0.1", 8888);
-    std::cout << "Serveur créé" << std::endl;
+    std::cout << "Serveur crÃ©Ã©" << std::endl;
     //std::cin.ignore();
     while (true) { //std::cout << "server is alive" << std::endl; 
 	}

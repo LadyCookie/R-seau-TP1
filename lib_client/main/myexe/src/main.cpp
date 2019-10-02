@@ -10,6 +10,5 @@
 int main(void)
 {
 
-    ThunderChatClient Client = ThunderChatClient("127.0.0.1", "playerId", 1);
-
+    ThunderChatClient Client = ThunderChatClient("127.0.0.1", "Mazak", 1);
 }

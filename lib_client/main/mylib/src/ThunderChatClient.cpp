@@ -68,8 +68,8 @@ using SOCKET = int;
 		SOCKADDR_IN sin;
 		sin.sin_family = AF_INET;
 		sin.sin_port = htons(8888);
-		sin.sin_addr.s_addr = inet_addr(serverName_.c_str());
-		//Ou inet_pton(AF_INET, "0.0.0.0", &sin.sin_addr); ??
+		//sin.sin_addr.s_addr = inet_addr(serverName_.c_str());
+		inet_pton(AF_INET, serverName_.c_str(), &sin.sin_addr);
 
 		/*Si c'est un nom de domaine :
 
@@ -117,6 +117,7 @@ using SOCKET = int;
 		std::string IWTT = IWantThisTeam.ToSend();
 
 		std::cout << IWTT << std::endl;
+		
 
 		send(sock_, IWTT.c_str(), sizeof(IWTT.c_str()), 0);
 		while (true);
