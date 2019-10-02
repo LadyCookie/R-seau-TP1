@@ -95,7 +95,8 @@ void ThunderChatServer::runner()
                 std::cout << "Something is coming" << std::endl;
                 //waiting client to tell wich team them belongs to
 
-
+				/*****Recv juste après accept => récupération de l'équipe pour 
+				le mettre dans le bon array de socket******/
                 std::array<char, MAX_MSG_SIZE> buffer;
 				memset(buffer.data(), '\0', MAX_MSG_SIZE);
                 if (int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0) < 0)
@@ -105,21 +106,53 @@ void ThunderChatServer::runner()
                 {
                     std::string dataStr(buffer.data(), receivedBytes);
 					std::cout  << buffer.data() << std::endl;
+					std::string client_team_str = buffer.data();
+					int client_team = std::stoi(client_team_str);
+					std::cout << "Team client : " << client_team << std::endl;
+
+					if (client_team == 0) {
+						//Mettre dans l'équipe A
+
+
+						/*
+						auto client = new Connection(s,clientAddr,clientAddrLength);
+						all_sockets[nb_connected]=*client;
+						for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
+						{
+							char str[INET_ADDRSTRLEN];
+							inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
+							f(str);
+						};
+						nb_connected++;
+						*/
+
+
+					}
+					if (client_team == 1) {
+						//Mettre dans l'équipe B
+
+						/*
+						auto client = new Connection(s,clientAddr,clientAddrLength);
+						all_sockets[nb_connected]=*client;
+						for(std::function<void(const std::string& clientB)> f : callbackOnConnect)
+						{
+							char str[INET_ADDRSTRLEN];
+							inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
+							f(str);
+						};
+						nb_connected++;
+						*/
+
+					}
+					else {
+						//Refuser la connexion
+						//shouldStop = true ?
+					}
                 }
                 
                 //std::cout << msg << std::endl;
                 
-				/*
-                auto client = new Connection(s,clientAddr,clientAddrLength);
-                all_sockets[nb_connected]=*client;
-                for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
-                {
-                    char str[INET_ADDRSTRLEN];
-                    inet_ntop(AF_INET, &clientAddr, str, INET_ADDRSTRLEN);
-                    f(str);
-                };
-                nb_connected++;
-				*/
+				
             }
     }
 }

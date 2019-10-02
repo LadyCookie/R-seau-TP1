@@ -109,17 +109,26 @@ using SOCKET = int;
 		//on est co
 
 		std::string e = std::to_string(team_);
+		//WTF sizeof(e) = 40 ???
 		std::cout << e << std::endl;
+		std::cout << "sizeof equipe (string) : " << sizeof(e) << std::endl;
 		auto equipe = e.c_str();
-		std::cout << equipe << std::endl;
+		//sizeof(equipe) = 8 car char *
+		std::cout << "Equipe : "<<equipe << std::endl;
+		std::cout << "sizeof(Equipe) : " << sizeof(equipe) << std::endl;
+		send(sock_, equipe, 1, 0); 
+		//Je mets la taille à 1 parce que je m'attends juste à envoyer un 0 ou 1
+		//(Je devrais peut etre mettre 2 à cause du \0)
+
 
 		Message IWantThisTeam = Message(playerId_, 0, 1, "");
 		std::string IWTT = IWantThisTeam.ToSend();
 
-		std::cout << IWTT << std::endl;
-		
-
-		send(sock_, IWTT.c_str(), sizeof(IWTT.c_str()), 0);
+		std::cout << "IWTT : "<<IWTT << std::endl;
+		auto IWTTstr = IWTT.c_str();
+		//sizeof(IWTTstr) = 8 parce que c'est un char *
+		//POURQUOI sizeof(IWTT) = 40 au lieu de 50 ??
+		//send(sock_, IWTTstr, sizeof(IWTT), 0);
 		while (true);
 		// on envoie le numéro de la team
 
