@@ -1,5 +1,6 @@
 #include "Connection.hpp"
 
+#include <array>
 #include <thread>
 #include <functional>
 
@@ -42,7 +43,8 @@ void Connection::OnData(std::function<void(const std::string& client)> f) {
 };
 
 void Connection::run(){
-    char* buffer =(char*) malloc (MAX_MSG_SIZE * sizeof(char));
+	std::array<char, MAX_MSG_SIZE> buffer;
+	memset(buffer.data(), '\0', MAX_MSG_SIZE);
     while(!shouldStop){
         if (! (recv(clientSocket, buffer, MAX_MSG_SIZE,0)<0)){
             
@@ -52,7 +54,7 @@ void Connection::run(){
             };
         }
     }
-    free(buffer);
+    
 }
 
 void Connection::CloseConnection(){

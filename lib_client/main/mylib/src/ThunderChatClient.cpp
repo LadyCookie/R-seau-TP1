@@ -71,35 +71,6 @@ using SOCKET = int;
 		//sin.sin_addr.s_addr = inet_addr(serverName_.c_str());
 		inet_pton(AF_INET, serverName_.c_str(), &sin.sin_addr);
 
-		/*Si c'est un nom de domaine :
-
-		 if (sin.sin_addr.s_addr == INADDR_NONE)
-
-		{
-
-			host = gethostbyname(sin.sin_addr.s_addr);
-
-			if (host == NULL)
-
-			{
-
-				printf("Unable to resolve server %s\n", sin.sin_addr.s_addr);
-
-				return 1;
-
-			}
-
-			else
-
-				printf("The hostname resolved successfully!\n");
-
-
-
-			CopyMemory(&sin.sin_addr, host->h_addr_list[0], host->h_length);      // marche pas sur linux, faire un ifdef
-
-		}
-
-		*/
 
 		if (connect(sock_, (SOCKADDR*)&sin, sizeof(sin)) < 0)
 		{

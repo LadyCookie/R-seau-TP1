@@ -115,7 +115,7 @@ void ThunderChatServer::runner()
 
 
 						/*
-						auto client = new Connection(s,clientAddr,clientAddrLength);
+						auto client =  Connection(s,clientAddr,clientAddrLength);
 						all_sockets[nb_connected]=*client;
 						for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
 						{
@@ -132,7 +132,7 @@ void ThunderChatServer::runner()
 						//Mettre dans l'équipe B
 
 						/*
-						auto client = new Connection(s,clientAddr,clientAddrLength);
+						auto client = Connection(s,clientAddr,clientAddrLength);
 						all_sockets[nb_connected]=*client;
 						for(std::function<void(const std::string& clientB)> f : callbackOnConnect)
 						{
