@@ -28,7 +28,7 @@
 using SOCKET = int
 #define SD_BOTH SHUT_RDWR
 #define closesocket(s) close(s)
-#defin INVALID_SOCKET - 1
+#define INVALID_SOCKET - 1
 
 #endif
 
