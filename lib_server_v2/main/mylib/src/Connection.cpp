@@ -38,23 +38,18 @@ std::thread loop;
 
 Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength, int team){
 
-	std::cout << "Attributing values" << std::endl;
     clientSocket=s;
     clientAddr_=clientAddr;
     clientAddrLength_=clientAddrLength;
     team_ = team;
-    std::cout << "Launching connexion thread" << std::endl;
     shouldStop = false;
-	//SOCKET ALREADY CLOSE AT THIS POINT
     loop = std::make_unique<std::thread>(&Connection::run, this);
     std::cout << "thread connexion launched" << std::endl;
 }
 
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
-    std::cout << "Appel de la méthode OnData" << std::endl;
     OnDataEvent.push_back(f);
-    std::cout << OnDataEvent.size() << std::endl;
 };
 
 void Connection::run(){
@@ -63,15 +58,12 @@ void Connection::run(){
     while(!shouldStop){
         int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0);
         if (! (receivedBytes < 0)){
-            std::cout << "RECEPTION : calling " << OnDataEvent.size() << "functions" << std::endl;
+            std::cout << "RECEPTION : calling the " << OnDataEvent.size() << " functions in callback" << std::endl;
             for(std::function<void(const std::string&)> f : OnDataEvent)
             {
                 f(buffer.data());
             };
         }
-		else {
-			//std::cout << WSAGetLastError() << std::endl;
-		}
     }
     
 }

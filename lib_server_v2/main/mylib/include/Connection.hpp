@@ -28,8 +28,10 @@ class Connection{
     public:
     Connection(SOCKET,sockaddr,socklen_t,int);
 	Connection(const Connection&) = default;
+
     void OnData(std::function<void(const std::string& msg)> f);
     void CloseConnection();
+
     SOCKET getSocket();
     int getTeam();
     std::vector<std::function<void(const std::string& client)>> getDataEvent();
@@ -44,6 +46,7 @@ class Connection{
     SOCKET clientSocket;
     sockaddr clientAddr_;
     socklen_t clientAddrLength_;
+
     std::vector<std::function<void(const std::string& client)>> OnDataEvent;
     std::vector<Connection> *myTeam_;
     std::vector<Connection> *otherTeam_;
