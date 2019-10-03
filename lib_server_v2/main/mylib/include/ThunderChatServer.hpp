@@ -40,7 +40,7 @@ class ThunderChatServer{
 
 
     private:
-    void sendToTeamA(const std::string& msg);
+
     void runner();
     std::unique_ptr<std::thread> loop;
 
@@ -50,6 +50,7 @@ class ThunderChatServer{
     sockaddr_in addrServer;
     int port;
     bool shouldStop;
+
     std::vector<std::function<void(const std::string& client)>> callbackOnConnect;
     std::vector<std::function<void(const std::string& client)>> callbackOnDisconnect;
 };

@@ -6,7 +6,7 @@
 #include <array>
 #include <algorithm>
 
-#define MAX_MSG_SIZE 1024 //to define more precisely
+#define MAX_MSG_SIZE 1024 
 
 #ifdef _WIN32
 
@@ -84,7 +84,6 @@ void ThunderChatServer::runner()
                 std::cout << "ERROR : " << clientSocket << std::endl;   
             }
             else{
-                std::cout << "Something is coming" << std::endl;
                 //waiting client to tell wich team them belongs to
 
 				/*****Recv juste après accept => récupération de l'équipe pour 
@@ -96,18 +95,17 @@ void ThunderChatServer::runner()
 				}
                 else
                 {
+					//decripting first reception
                     std::string dataStr(buffer.data(), receivedBytes);
 					std::cout  << buffer.data() << std::endl;
 					std::string client_team_str = buffer.data();
 					int client_team = std::stoi(client_team_str);
-					std::cout << "Team client : " << client_team << std::endl;
-					std::cout << "Client team + 1000 = " << (client_team + 1000) << std::endl; 
+
 					if (client_team == 0) {
 						//Mettre dans l'équipe A
-                        std::cout << "Creating connection" << std::endl;
 						auto client =  Connection(clientSocket,clientAddr,clientAddrLength,0);
-                        std::cout << "Connection created" << std::endl;
 						
+						//telling what to do ondata
 						client.OnData([this] (const std::string & msg) { 
 							//on parse le json reçu
 							json d = json::parse(msg);
@@ -133,14 +131,8 @@ void ThunderChatServer::runner()
 							});
 						});
 
-						std::cout << "OnData Callback configured" << std::endl;
-
-						
+						//recording in relevant team
 						socket_team_A.push_back(client);
-                        std::cout << "Client ajouté à la BDD" << std::endl;
-
-						std::cout << "in client callback" << client.getDataEvent().size() << std::endl;
-                        std::cout << "in socket team A" << socket_team_A.at(0).getDataEvent().size() << std::endl;
 
 						for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
 						{
@@ -154,8 +146,43 @@ void ThunderChatServer::runner()
 					}
 					if (client_team == 1) {
                         // Mettre dans l'équipe B
+                        auto client = Connection(clientSocket, clientAddr,
+                                                    clientAddrLength, 1);
 
-                        auto client =Connection(s, clientAddr, clientAddrLength, 1);
+                        // telling what to do ondata
+                        client.OnData([this](const std::string& msg) {
+                            // on parse le json reçu
+                            json d = json::parse(msg);
+                            // si on envoie à toute la partie, on envoie à la
+                            // team adverse
+                            if (d["msg_type"] == 0)
+                            {
+                                for_each(socket_team_A.begin(),
+                                            socket_team_A.end(),
+                                            [&d](Connection c) {
+                                                std::string toSend = d["msg"];
+                                                send(c.getSocket(), toSend.data(),
+                                                    sizeof(toSend.data()), 0);
+                                            });
+                            }
+                            // dans tous les cas, on envoie à sa propre équipe
+                            for_each(
+                                socket_team_B.begin(), socket_team_B.end(),
+                                [&d](Connection c) {
+                                    std::string toSend = d["msg"];
+                                    int err;
+                                    err = send(c.getSocket(), toSend.data(),
+                                                sizeof(toSend.data()), 0);
+                                    if (err < 0)
+                                    {
+                                        std::cout
+                                            << "Error forwarding message : "
+                                            << WSAGetLastError << std::endl;
+                                    }
+                                });
+                        });
+
+                        // recording in relevant team
                         socket_team_B.push_back(client);
 
                         for (std::function<void(const std::string& clientA)> f :
@@ -165,8 +192,10 @@ void ThunderChatServer::runner()
                             inet_ntop(AF_INET, &clientAddr, str,
                                         INET_ADDRSTRLEN);
                             f(str);
-                        };         
-						nb_connected++;
+                        };
+
+                        std::cout << "Callback OnConnect done" << std::endl;
+                        nb_connected++;
 					}
 					else {
                         closesocket(s);
