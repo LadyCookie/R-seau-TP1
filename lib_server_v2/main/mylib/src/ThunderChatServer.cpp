@@ -91,7 +91,7 @@ void ThunderChatServer::runner()
                 std::array<char, MAX_MSG_SIZE> buffer;
 				memset(buffer.data(), '\0', MAX_MSG_SIZE);
                 if (int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0) < 0)
-                { std::cout << "ERROR RECEPTION FAIL : " << WSAGetLastError() << std::endl;
+                { std::cout << "ERROR RECEPTION FAIL " << std::endl;
 				}
                 else
                 {
@@ -124,8 +124,7 @@ void ThunderChatServer::runner()
                                     if (err < 0)
                                     {
                                         std::cout
-                                            << "Error forwarding message : "
-                                            << WSAGetLastError
+                                            << "Error forwarding message "
                                             << std::endl;
                                     }
 							});
@@ -177,8 +176,7 @@ void ThunderChatServer::runner()
                                     if (err < 0)
                                     {
                                         std::cout
-                                            << "Error forwarding message : "
-                                            << WSAGetLastError << std::endl;
+                                            << "Error forwarding message " << std::endl;
                                     }
                                 });
                         });

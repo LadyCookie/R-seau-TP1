@@ -95,7 +95,7 @@ using SOCKET = int;
 			memset(buffer.data(), '\0', 1024);
 			if (int receivedBytes = recv(sock_, buffer.data(), 1024, 0) < 0)
 			{
-				std::cout << "ERROR RECEPTION FAIL : " << WSAGetLastError() << std::endl;
+				std::cout << "ERROR RECEPTION FAIL " << std::endl;
 			}
 			else
 			{
