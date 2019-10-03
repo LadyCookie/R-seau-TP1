@@ -27,16 +27,22 @@ using SOCKET = inet
 class Connection{
     public:
     Connection(SOCKET,sockaddr,socklen_t,int);
+	Connection(const Connection&) = default;
     void OnData(std::function<void(const std::string& msg)> f);
     void CloseConnection();
+    SOCKET getSocket();
+    int getTeam();
 
     private:
     void run();
     bool shouldStop;
     int team_;
+
+    std::shared_ptr<std::thread> loop;
+
     SOCKET clientSocket;
-    sockaddr clientAddr;
-    socklen_t clientAddrLength;
+    sockaddr clientAddr_;
+    socklen_t clientAddrLength_;
     std::vector<std::function<void(const std::string& client)>> OnDataEvent;
     std::vector<Connection> *myTeam_;
     std::vector<Connection> *otherTeam_;

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Message.hpp"
+#include <thread>
 
 #ifdef _WIN32
 
@@ -42,5 +43,8 @@ class ThunderChatClient{
     std::string playerId_;
     int team_;
     SOCKET sock_;
+	std::unique_ptr<std::thread> loop;
+	bool shouldStop;
+	void run();
 };
 #endif //header

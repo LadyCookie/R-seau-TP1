@@ -101,11 +101,33 @@ void ThunderChatServer::runner()
 					std::string client_team_str = buffer.data();
 					int client_team = std::stoi(client_team_str);
 					std::cout << "Team client : " << client_team << std::endl;
+					std::cout << "Client team + 1000 = " << (client_team + 1000) << std::endl; 
 					if (client_team == 0) {
 						//Mettre dans l'équipe A
-
+                        std::cout << "Creating connection" << std::endl;
 						auto client =  Connection(s,clientAddr,clientAddrLength,0);
+                        std::cout << "Connection created" << std::endl;
 						socket_team_A.push_back(client); 
+						std::cout << "Client ajouté à la BDD" << std::endl;
+						
+						client.OnData([this] (const std::string & msg) { 
+							//on parse le json reçu
+							json d = json::parse(msg);
+							//si on envoie à toute la partie, on envoie à la team adverse
+							if (d["msg_type"] == 0) {
+								for_each(socket_team_B.begin(), socket_team_B.end(), [&d](Connection c) {
+									std::string toSend = d["msg"];
+									send(c.getSocket(),toSend.data() , sizeof(toSend.data()) , 0);
+								});
+							}
+							//dans tous les cas, on envoie à sa propre équipe
+                            for_each( socket_team_A.begin(),socket_team_A.end(), [&d](Connection c){
+                                    std::string toSend = d["msg"];
+									send(c.getSocket(), toSend.data() ,sizeof(toSend.data()), 0); });
+
+						});
+
+						std::cout << "OnData Callback configured" << std::endl;
 
 						for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
 						{
@@ -114,6 +136,7 @@ void ThunderChatServer::runner()
 							f(str);
 						};                                               
 
+						std::cout << "Callback OnConnect done" << std::endl;
 						nb_connected++;
 					}
 					if (client_team == 1) {

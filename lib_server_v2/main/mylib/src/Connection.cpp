@@ -3,6 +3,11 @@
 #include <array>
 #include <thread>
 #include <functional>
+#include <iostream>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 
 #define MAX_MSG_SIZE 300 //to define more precisely
 
@@ -32,12 +37,17 @@ using SOCKET = inet
 std::thread loop;
 
 Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength, int team){
+
+	std::cout << "Attributing values" << std::endl;
     clientSocket=s;
-    clientAddr=clientAddr;
-    clientAddrLength=clientAddrLength;
-    std::thread loop(&Connection::run, this);
+    clientAddr_=clientAddr;
+    clientAddrLength_=clientAddrLength;
     team_ = team;
+    std::cout << "Launching connexion thread" << std::endl;
+    loop = std::make_unique<std::thread>(&Connection::run, this);
+    std::cout << "thread connexion launched" << std::endl;
 }
+
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
     OnDataEvent.push_back(f);
@@ -47,7 +57,10 @@ void Connection::run(){
 	std::array<char, MAX_MSG_SIZE> buffer;
 	memset(buffer.data(), '\0', MAX_MSG_SIZE);
     while(!shouldStop){
-        if (! (recv(clientSocket, buffer.data(), MAX_MSG_SIZE,0)<0)){
+        std::cout << "Waiting msg" << std::endl;
+        int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0);
+        if (! (receivedBytes < 0)){
+            std::cout << "Callback OnDataEvent" << std::endl;
             for(std::function<void(const std::string&)> f : OnDataEvent)
             {
                 f(buffer.data());
@@ -59,9 +72,11 @@ void Connection::run(){
 
 void Connection::CloseConnection(){
     shouldStop=true;
-    if(loop.joinable()){
-        loop.join();
+    if(loop->joinable()){
+        loop->join();
     }
     int err = shutdown(clientSocket, SD_BOTH);
     err = closesocket(clientSocket);
 }
+
+SOCKET Connection::getSocket() { return clientSocket; }

@@ -63,6 +63,7 @@ using SOCKET = int;
 		}
 #endif
 
+		//creating the socket
 		sock_ = socket(AF_INET, SOCK_STREAM, 0);
 
 		SOCKADDR_IN sin;
@@ -71,7 +72,7 @@ using SOCKET = int;
 		//sin.sin_addr.s_addr = inet_addr(serverName_.c_str());
 		inet_pton(AF_INET, serverName_.c_str(), &sin.sin_addr);
 
-
+		//conecting the socket
 		if (connect(sock_, (SOCKADDR*)&sin, sizeof(sin)) < 0)
 		{
 			std::cout << "Connection error";
@@ -88,21 +89,31 @@ using SOCKET = int;
 		std::cout << "Equipe : "<<equipe << std::endl;
 		std::cout << "sizeof(Equipe) : " << sizeof(equipe) << std::endl;
 		send(sock_, equipe, 1, 0); 
-		//Je mets la taille à 1 parce que je m'attends juste à envoyer un 0 ou 1
-		//(Je devrais peut etre mettre 2 à cause du \0)
 
 
 		Message IWantThisTeam = Message(playerId_, 0, 1, "");
 		std::string IWTT = IWantThisTeam.ToSend();
 
 		std::cout << "IWTT : "<<IWTT << std::endl;
-		auto IWTTstr = IWTT.c_str();
-		//sizeof(IWTTstr) = 8 parce que c'est un char *
-		//POURQUOI sizeof(IWTT) = 40 au lieu de 50 ??
-		//send(sock_, IWTTstr, sizeof(IWTT), 0);
-		while (true);
-		// on envoie le numéro de la team
 
+		shouldStop = false;
+		loop = std::make_unique<std::thread>(&ThunderChatClient::run(), this);
+
+	}
+
+	void ThunderChatClient::run() {
+		while (!shouldStop) {
+			std::array<char, 1024> buffer;
+			memset(buffer.data(), '\0', 1024);
+			if (int receivedBytes = recv(sock_, buffer.data(), 1024, 0) < 0)
+			{
+				std::cout << "ERROR RECEPTION FAIL : " << WSAGetLastError() << std::endl;
+			}
+			else
+			{
+				std::cout << buffer.data() << std::endl;
+			}
+		}
 	}
 
 	void ThunderChatClient::OnMessage(const Message& msg)
@@ -122,7 +133,7 @@ using SOCKET = int;
 		Message mess = Message(playerId_, 0, team_, msg);
 		std::string m = mess.ToSend();
 		auto message = m.c_str();
-		send(sock_, message, sizeof(message), 0);
+		send(sock_, message, sizeof(m), 0);
 	}
 
 	void ThunderChatClient::SendToTeam(const std::string& msg)
@@ -130,7 +141,7 @@ using SOCKET = int;
 		Message mess = Message(playerId_, 1, team_, msg);
 		std::string m = mess.ToSend();
 		auto message = m.c_str();
-		send(sock_, message, sizeof(message), 0);
+		send(sock_, message, sizeof(m), 0);
 	}
 
 
