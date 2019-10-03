@@ -52,7 +52,9 @@ Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength, 
 
 
 void Connection::OnData(std::function<void(const std::string& client)> f) {
+    std::cout << "Appel de la méthode OnData" << std::endl;
     OnDataEvent.push_back(f);
+    std::cout << OnDataEvent.size() << std::endl;
 };
 
 void Connection::run(){
@@ -61,7 +63,7 @@ void Connection::run(){
     while(!shouldStop){
         int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0);
         if (! (receivedBytes < 0)){
-            std::cout << "RECEPTION" << std::endl;
+            std::cout << "RECEPTION : calling " << OnDataEvent.size() << "functions" << std::endl;
             for(std::function<void(const std::string&)> f : OnDataEvent)
             {
                 f(buffer.data());
@@ -84,3 +86,5 @@ void Connection::CloseConnection(){
 }
 
 SOCKET Connection::getSocket() { return clientSocket; }
+
+std::vector<std::function<void(const std::string& client)>> Connection::getDataEvent() { return OnDataEvent; }

@@ -32,6 +32,7 @@ class Connection{
     void CloseConnection();
     SOCKET getSocket();
     int getTeam();
+    std::vector<std::function<void(const std::string& client)>> getDataEvent();
 
     private:
     void run();

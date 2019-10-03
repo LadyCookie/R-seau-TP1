@@ -107,8 +107,6 @@ void ThunderChatServer::runner()
                         std::cout << "Creating connection" << std::endl;
 						auto client =  Connection(clientSocket,clientAddr,clientAddrLength,0);
                         std::cout << "Connection created" << std::endl;
-						socket_team_A.push_back(client); 
-						std::cout << "Client ajouté à la BDD" << std::endl;
 						
 						client.OnData([this] (const std::string & msg) { 
 							//on parse le json reçu
@@ -123,11 +121,26 @@ void ThunderChatServer::runner()
 							//dans tous les cas, on envoie à sa propre équipe
                             for_each( socket_team_A.begin(),socket_team_A.end(), [&d](Connection c){
                                     std::string toSend = d["msg"];
-									send(c.getSocket(), toSend.data() ,sizeof(toSend.data()), 0); });
-
+									int err;
+									err=send(c.getSocket(), toSend.data() ,sizeof(toSend.data()), 0);
+                                    if (err < 0)
+                                    {
+                                        std::cout
+                                            << "Error forwarding message : "
+                                            << WSAGetLastError
+                                            << std::endl;
+                                    }
+							});
 						});
 
 						std::cout << "OnData Callback configured" << std::endl;
+
+						
+						socket_team_A.push_back(client);
+                        std::cout << "Client ajouté à la BDD" << std::endl;
+
+						std::cout << "in client callback" << client.getDataEvent().size() << std::endl;
+                        std::cout << "in socket team A" << socket_team_A.at(0).getDataEvent().size() << std::endl;
 
 						for(std::function<void(const std::string& clientA)> f : callbackOnConnect)
 						{

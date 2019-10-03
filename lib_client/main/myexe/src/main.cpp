@@ -9,13 +9,17 @@
 
 int main(void)
 {
-
-    ThunderChatClient Client = ThunderChatClient("127.0.0.1", "Mazak", 0);
 	std::string msg;
 	std::string team;
+
+	int whichTeam = -1;
+	std::cout << "Dans quelle équipe voulez-vous jouer ? (0 = Team A, 1 = Team B)" << std::endl;
+	while (whichTeam != 0 && whichTeam != 1) {
+		std::cin >> whichTeam;
+	}
+	ThunderChatClient Client = ThunderChatClient("127.0.0.1", "Mazak", whichTeam);
+
 	while (true) {
-		std::cout << "Quelle team? 0 : all  1 : my team" << std::endl;
-		std::cin >> team;
 		std::cout << "Message à envoyer: " << std::endl;
 		std::cin >> msg;
 		if (team == "0") {
