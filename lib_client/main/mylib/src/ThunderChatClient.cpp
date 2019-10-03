@@ -70,7 +70,6 @@ using SOCKET = int;
 		SOCKADDR_IN sin;
 		sin.sin_family = AF_INET;
 		sin.sin_port = htons(8888);
-		//sin.sin_addr.s_addr = inet_addr(serverName_.c_str());
 		inet_pton(AF_INET, serverName_.c_str(), &sin.sin_addr);
 
 		//conecting the socket
@@ -82,20 +81,8 @@ using SOCKET = int;
 		//on est co
 
 		std::string e = std::to_string(team_);
-		//WTF sizeof(e) = 40 ???
-		std::cout << e << std::endl;
-		std::cout << "sizeof equipe (string) : " << sizeof(e) << std::endl;
 		auto equipe = e.c_str();
-		//sizeof(equipe) = 8 car char *
-		std::cout << "Equipe : "<<equipe << std::endl;
-		std::cout << "sizeof(Equipe) : " << sizeof(equipe) << std::endl;
 		send(sock_, equipe, 1, 0); 
-
-
-		Message IWantThisTeam = Message(playerId_, 0, 1, "");
-		std::string IWTT = IWantThisTeam.ToSend();
-
-		std::cout << "IWTT : "<<IWTT << std::endl;
 
 		shouldStop = false;
 		loop = std::make_unique<std::thread>(&ThunderChatClient::run, this);
@@ -119,14 +106,13 @@ using SOCKET = int;
 
 	void ThunderChatClient::OnMessage(const Message& msg)
 	{
-		//L'afficher et c'est tout ?
-		//On remet sous forme de JSON (Message) et si c'est pour la team : cout<< "Team : " << playerId << " : " <<msg
-		//Et si c'est pour la Party, cout<< "Party : " << playerId << " : " <<msg
+		Message copyMsg = msg;
+		std::cout << copyMsg.getUsername() << " : " << copyMsg.getMsg() << std::endl;
 	}
 
 	void ThunderChatClient::OnDisconnect()
 	{
-		//Appel du destructeur ?
+		shouldStop = true;
 	}
 
 	void ThunderChatClient::SendToParty(const std::string& msg)
