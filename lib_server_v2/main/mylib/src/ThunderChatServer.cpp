@@ -146,6 +146,7 @@ void ThunderChatServer::runner()
 					}
 					if (client_team == 1) {
                         // Mettre dans l'équipe B
+
                         auto client = Connection(clientSocket, clientAddr,
                                                     clientAddrLength, 1);
 
