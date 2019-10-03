@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Message.hpp"
 #include "ThunderChatClient.hpp"
+#include<thread>
 
 #ifdef _WIN32
 
@@ -97,7 +98,7 @@ using SOCKET = int;
 		std::cout << "IWTT : "<<IWTT << std::endl;
 
 		shouldStop = false;
-		loop = std::make_unique<std::thread>(&ThunderChatClient::run(), this);
+		loop = std::make_unique<std::thread>(&ThunderChatClient::run, this);
 
 	}
 

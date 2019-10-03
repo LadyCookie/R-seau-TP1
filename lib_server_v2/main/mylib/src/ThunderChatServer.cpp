@@ -105,7 +105,7 @@ void ThunderChatServer::runner()
 					if (client_team == 0) {
 						//Mettre dans l'équipe A
                         std::cout << "Creating connection" << std::endl;
-						auto client =  Connection(s,clientAddr,clientAddrLength,0);
+						auto client =  Connection(clientSocket,clientAddr,clientAddrLength,0);
                         std::cout << "Connection created" << std::endl;
 						socket_team_A.push_back(client); 
 						std::cout << "Client ajouté à la BDD" << std::endl;

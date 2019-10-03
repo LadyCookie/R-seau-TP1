@@ -44,6 +44,8 @@ Connection::Connection(SOCKET s,sockaddr clientAddr,socklen_t clientAddrLength, 
     clientAddrLength_=clientAddrLength;
     team_ = team;
     std::cout << "Launching connexion thread" << std::endl;
+    shouldStop = false;
+	//SOCKET ALREADY CLOSE AT THIS POINT
     loop = std::make_unique<std::thread>(&Connection::run, this);
     std::cout << "thread connexion launched" << std::endl;
 }
@@ -57,15 +59,17 @@ void Connection::run(){
 	std::array<char, MAX_MSG_SIZE> buffer;
 	memset(buffer.data(), '\0', MAX_MSG_SIZE);
     while(!shouldStop){
-        std::cout << "Waiting msg" << std::endl;
         int receivedBytes = recv(clientSocket, buffer.data(), MAX_MSG_SIZE, 0);
         if (! (receivedBytes < 0)){
-            std::cout << "Callback OnDataEvent" << std::endl;
+            std::cout << "RECEPTION" << std::endl;
             for(std::function<void(const std::string&)> f : OnDataEvent)
             {
                 f(buffer.data());
             };
         }
+		else {
+			//std::cout << WSAGetLastError() << std::endl;
+		}
     }
     
 }
